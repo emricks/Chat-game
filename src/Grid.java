@@ -97,22 +97,22 @@ public class Grid {
             inner.forEach(e -> {
                 switch (e) {
                     case 'p':
-                        print.append("x ");
+                        print.append(Player.character);
                         break;
                     case '1':
-                        print.append("1 ");
+                        print.append(Player.character);
                         break;
                     case '2':
-                        print.append("2 ");
+                        print.append(Player2.character);
                         break;
                     case 'c':
-                        print.append("o ");
+                        print.append("\uD83D\uDCB5");
                         break;
                     case 'r':
-                        print.append("O ");
+                        print.append("\uD83D\uDCB0");
                         break;
                     case 'l':
-                        print.append("0 ");
+                        print.append("\uD83D\uDC8E");
                         break;
                     case 'n':
                         print.append(". ");

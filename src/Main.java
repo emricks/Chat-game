@@ -1,12 +1,16 @@
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main extends JFrame implements KeyListener {
     static int w = 8;
     static int h = 8;
+    static boolean inGame = false;
     static boolean multiplayer = false;
+    static List<String> choose = new ArrayList<>();
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Main frame = new Main();
@@ -17,11 +21,11 @@ public class Main extends JFrame implements KeyListener {
         if (input.nextInt() == 2) {
             multiplayer = true;
             System.out.println();
-            System.out.println("Player 1 uses arrow keys, Player 2 uses WASD.");
-            System.out.println("Move around and collect points,");
-            System.out.println("o = 1 points, O = 5 points, 0 = 25 points.");
-            System.out.println("First to 50 points wins!");
-            System.out.println("Press any key to start the game.");
+            input.nextLine();
+            System.out.println("Player 1 uses arrow keys to move, Player 2 uses WASD.");
+            System.out.println("Move around to collect money, first to $50 wins.");
+            System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
+            System.out.println("Press SHIFT to choose characters.");
             Player.xPos = 2;
             Player.yPos = 7;
             Player2.xPos = 7;
@@ -31,22 +35,74 @@ public class Main extends JFrame implements KeyListener {
             Coin2.changePosition();
             Coin2.xPos = 5;
             Coin2.yPos = 5;
-            Shop.rarityMultiplier = 4;
+            Shop.rarityMultiplier = 3;
         } else {
+            System.out.println();
+            input.nextLine();
+            System.out.println("Use arrow keys to move.");
+            System.out.println("Move around to collect money, press E to enter and exit the shop.");
+            System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
+            System.out.println("Press SHIFT to choose character.");
             Coin.changePosition();
         }
     }
-
+    static int index1 = 0;
+    static int index2 = 0;
     public Main() {
         setTitle("Game");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addKeyListener(this); // Add key listener to the frame
         setFocusable(true); // Make sure the frame can receive focus
+        choose.add("\uD83E\uDD99");
+        choose.add("\uD83E\uDD91");
+        choose.add("\uD83E\uDD98");
+        choose.add("\uD83D\uDC19");
+        choose.add("\uD83E\uDEBF");
+        choose.add("\uD83E\uDD85");
+        choose.add("\uD83D\uDC12");
+        choose.add("\uD83D\uDC01");
+        choose.add("\uD83D\uDC25");
+        choose.add("\uD83D\uDC20");
+        choose.add("\uD83D\uDC22");
+        choose.add("\uD83D\uDC09");
+        choose.add("\uD83D\uDC2B");
+        choose.add("\uD83D\uDC1D");
+        choose.add("\uD83D\uDC0C");
+        choose.add("\uD83E\uDD82");
     }
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!multiplayer) {
+        if (multiplayer && !inGame) {
+            if (e.getKeyCode() == KeyEvent.VK_UP && index1 < 15) {
+                index1++;
+            } else if (e.getKeyCode() == KeyEvent.VK_DOWN && index1 > 0) {
+                index1--;
+            } else if (e.getKeyCode() == KeyEvent.VK_W && index2 < 15) {
+                index2++;
+            } else if (e.getKeyCode() == KeyEvent.VK_S && index2 > 0) {
+                index2--;
+            } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                Player.character = choose.get(index1);
+                Player2.character = choose.get(index2);
+                inGame = true;
+                Grid.updatePosition(10,10);
+            }
+            Select.displayMenu(choose.get(index1), choose.get(index2));
+        }
+        if (!multiplayer && !inGame) {
+            if (e.getKeyCode() == KeyEvent.VK_UP && index1 < 15) {
+                index1++;
+            } else if (e.getKeyCode() == KeyEvent.VK_DOWN && index1 > 0) {
+                index1--;
+            } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                Player.character = choose.get(index1);
+                inGame = true;
+                Grid.updatePosition(w, h);
+            }
+            Select.displayMenu(choose.get(index1), choose.get(index2));
+        }
+        if (!multiplayer && inGame) {
             System.out.println("Not multiplayer is running");
             if (!Grid.shop) {
                 Grid.updatePosition(w, h);
@@ -84,6 +140,9 @@ public class Main extends JFrame implements KeyListener {
                         Grid.shop = true;
                         Shop.openShop();
                         return;
+                    case KeyEvent.VK_C:
+                        Player2.xPos = Coin.xPos;
+                        Player2.yPos = Coin.yPos;
                 }
 
                 if (Player.xPos == Coin.xPos && Player.yPos == Coin.yPos) {
@@ -142,7 +201,7 @@ public class Main extends JFrame implements KeyListener {
                 }
                 Shop.openShop();
             }
-        } else {
+        } else if (inGame) {
             w = 10;
             h = 10;
             Grid.updatePosition(w, h);
@@ -176,6 +235,10 @@ public class Main extends JFrame implements KeyListener {
                         Player.xPos = 0;
                     }
                     break;
+                case KeyEvent.VK_SHIFT:
+                    Player.xPos = Coin1.xPos;
+                    Player.yPos = Coin1.yPos;
+                    break;
                 case KeyEvent.VK_W:
                     if (Player2.yPos > 0) {
                         Player2.yPos--;
@@ -204,6 +267,10 @@ public class Main extends JFrame implements KeyListener {
                     } else {
                         Player2.xPos = 0;
                     }
+                    break;
+                case KeyEvent.VK_C:
+                    Player2.xPos = Coin.xPos;
+                    Player2.yPos = Coin.yPos;
                     break;
             }
 
