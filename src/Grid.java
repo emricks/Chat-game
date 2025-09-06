@@ -22,8 +22,16 @@ public class Grid {
             }
             board.add(list);
         }
-        List<Character> innerlist = board.get(Player.yPos);
-        innerlist.set(Player.xPos, 'p');
+        List<Character> innerlist;
+        if (Main.multiplayer) {
+            innerlist = board.get(Player.yPos);
+            innerlist.set(Player.xPos, '1');
+            innerlist = board.get(Player2.yPos);
+            innerlist.set(Player2.xPos, '2');
+        } else {
+            innerlist = board.get(Player.yPos);
+            innerlist.set(Player.xPos, 'p');
+        }
         innerlist = board.get(Coin.yPos);
         if (Coin.rarity == 'c') {
             innerlist.set(Coin.xPos, 'c');
@@ -83,12 +91,19 @@ public class Grid {
             }
         }
         print.append("+\n");
+
         board.forEach(inner -> {
             print.append("+ ");
             inner.forEach(e -> {
                 switch (e) {
                     case 'p':
                         print.append("x ");
+                        break;
+                    case '1':
+                        print.append("1 ");
+                        break;
+                    case '2':
+                        print.append("2 ");
                         break;
                     case 'c':
                         print.append("o ");
@@ -106,12 +121,43 @@ public class Grid {
             print.append("+\n");
         });
 
-        print.append("+");
-        for (int i = 0; i < 2*width+1; i++) {
-            print.append("-");
+        if (Main.multiplayer) {
+            digits = (int) Math.ceil(Math.log(Player2.cash+0.1)/Math.log(10));
+            if (Player2.cash == 1 || Player2.cash == 0) {digits = 1;}
+            print.append("+");
+            if (digits == 1) {
+                for (int i = 0; i < Math.floor(width-0.5); i++) {
+                    print.append("-");
+                }
+                print.append("$").append(Player2.cash);
+                for (int i = 0; i < Math.ceil(width-0.5); i++) {
+                    print.append("-");
+                }
+            } else if (digits == 2) {
+                for (int i = 0; i < width-1; i++) {
+                    print.append("-");
+                }
+                print.append("$").append(Player2.cash);
+                for (int i = 0; i < width-1; i++) {
+                    print.append("-");
+                }
+            } else {
+                for (int i = 0; i < Math.floor(width-1.5); i++) {
+                    print.append("-");
+                }
+                print.append("$").append(Player2.cash);
+                for (int i = 0; i < Math.ceil(width-1.5); i++) {
+                    print.append("-");
+                }
+            }
+            print.append("+\n");
+        } else {
+            print.append("+");
+            for (int i = 0; i < 2*width+1; i++) {
+                print.append("-");
+            }
+            print.append("+");
         }
-        print.append("+");
-
         System.out.println(print);
     }
 }

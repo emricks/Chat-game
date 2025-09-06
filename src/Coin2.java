@@ -5,8 +5,13 @@ public class Coin2 {
     static int yPos = -1;
 
     static void changePosition() {
-        Player.cash += value;
-        while (Player.xPos == xPos && Player.yPos == yPos || Coin1.xPos == xPos && Coin1.yPos == yPos || Coin.xPos == xPos && Coin.xPos == yPos) {
+        if (Player.xPos == xPos && Player.yPos == yPos) {
+            Player.cash += value;
+        }
+        if (Player2.xPos == xPos && Player2.yPos == yPos) {
+            Player2.cash += value;
+        }
+        while (Player.xPos == xPos && Player.yPos == yPos || Player2.xPos == xPos && Player2.yPos == yPos || Coin1.xPos == xPos && Coin1.yPos == yPos || Coin.xPos == xPos && Coin.xPos == yPos) {
             xPos = (int) (Math.random() * Grid.width);
             yPos = (int) (Math.random() * Grid.height);
         }
