@@ -3,7 +3,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Main extends JFrame implements KeyListener {
     static int w = 8;
@@ -16,35 +15,7 @@ public class Main extends JFrame implements KeyListener {
             Main frame = new Main();
             frame.setVisible(true);
         });
-        Scanner input = new Scanner(System.in);
         System.out.println("1 for singleplayer, 2 for multiplayer");
-        if (input.nextInt() == 2) {
-            multiplayer = true;
-            System.out.println();
-            input.nextLine();
-            System.out.println("Player 1 uses arrow keys to move, Player 2 uses WASD.");
-            System.out.println("Move around to collect money, first to $50 wins.");
-            System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
-            System.out.println("Press SHIFT to choose characters.");
-            Player.xPos = 2;
-            Player.yPos = 7;
-            Player2.xPos = 7;
-            Player2.yPos = 7;
-            Coin.changePosition();
-            Coin1.changePosition();
-            Coin2.changePosition();
-            Coin2.xPos = 5;
-            Coin2.yPos = 5;
-            Shop.rarityMultiplier = 3;
-        } else {
-            System.out.println();
-            input.nextLine();
-            System.out.println("Use arrow keys to move.");
-            System.out.println("Move around to collect money, press E to enter and exit the shop.");
-            System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
-            System.out.println("Press SHIFT to choose character.");
-            Coin.changePosition();
-        }
     }
     static int index1 = 0;
     static int index2 = 0;
@@ -70,15 +41,21 @@ public class Main extends JFrame implements KeyListener {
         choose.add("\uD83D\uDC1D");
         choose.add("\uD83D\uDC0C");
         choose.add("\uD83E\uDD82");
+        choose.add("\uD83D\uDC08");
+        choose.add("\uD83D\uDC31");
+        choose.add("\uD83D\uDC0B");
+        choose.add("\uD83D\uDC0D");
+        choose.add("\uD83D\uDC0E");
+        choose.add("\uD83D\uDC06");
     }
     @Override
     public void keyPressed(KeyEvent e) {
         if (multiplayer && !inGame) {
-            if (e.getKeyCode() == KeyEvent.VK_UP && index1 < 15) {
+            if (e.getKeyCode() == KeyEvent.VK_UP && index1 < choose.size()) {
                 index1++;
             } else if (e.getKeyCode() == KeyEvent.VK_DOWN && index1 > 0) {
                 index1--;
-            } else if (e.getKeyCode() == KeyEvent.VK_W && index2 < 15) {
+            } else if (e.getKeyCode() == KeyEvent.VK_W && index2 < choose.size()) {
                 index2++;
             } else if (e.getKeyCode() == KeyEvent.VK_S && index2 > 0) {
                 index2--;
@@ -91,7 +68,7 @@ public class Main extends JFrame implements KeyListener {
             Select.displayMenu(choose.get(index1), choose.get(index2));
         }
         if (!multiplayer && !inGame) {
-            if (e.getKeyCode() == KeyEvent.VK_UP && index1 < 15) {
+            if (e.getKeyCode() == KeyEvent.VK_UP && index1 < choose.size()) {
                 index1++;
             } else if (e.getKeyCode() == KeyEvent.VK_DOWN && index1 > 0) {
                 index1--;
@@ -99,8 +76,33 @@ public class Main extends JFrame implements KeyListener {
                 Player.character = choose.get(index1);
                 inGame = true;
                 Grid.updatePosition(w, h);
+            } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                multiplayer = true;
+                System.out.println();
+                System.out.println("Player 1 uses arrow keys to move, Player 2 uses WASD.");
+                System.out.println("Move around to collect money, first to $50 wins.");
+                System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
+                System.out.println("Press SHIFT to choose characters.");
+                Player.xPos = 2;
+                Player.yPos = 7;
+                Player2.xPos = 7;
+                Player2.yPos = 7;
+                Coin.changePosition();
+                Coin1.changePosition();
+                Coin2.changePosition();
+                Coin2.xPos = 5;
+                Coin2.yPos = 5;
+                Shop.rarityMultiplier = 3;
+            } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                Select.displayMenu(choose.get(index1), choose.get(index2));
+            } else if (e.getKeyCode() == KeyEvent.VK_1) {
+                System.out.println();
+                System.out.println("Use arrow keys to move.");
+                System.out.println("Move around to collect money, press E to enter and exit the shop.");
+                System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
+                System.out.println("Press SHIFT to choose character.");
+                Coin.changePosition();
             }
-            Select.displayMenu(choose.get(index1), choose.get(index2));
         }
         if (!multiplayer && inGame) {
             System.out.println("Not multiplayer is running");
@@ -141,8 +143,10 @@ public class Main extends JFrame implements KeyListener {
                         Shop.openShop();
                         return;
                     case KeyEvent.VK_C:
-                        Player2.xPos = Coin.xPos;
-                        Player2.yPos = Coin.yPos;
+                        Player.xPos = Coin.xPos;
+                        Player.yPos = Coin.yPos;
+                    case KeyEvent.VK_SLASH:
+                        System.exit(0);
                 }
 
                 if (Player.xPos == Coin.xPos && Player.yPos == Coin.yPos) {
@@ -272,6 +276,19 @@ public class Main extends JFrame implements KeyListener {
                     Player2.xPos = Coin.xPos;
                     Player2.yPos = Coin.yPos;
                     break;
+                case KeyEvent.VK_SLASH:
+                    if (Player.cash > Player2.cash) {
+                        System.out.println("Player 1 Wins!");
+                    } else if (Player2.cash > Player.cash) {
+                        System.out.println("Player 2 Wins!");
+                    } else {
+                        if (Player.cash == 0) {
+                            System.out.println("Nobody Wins :(");
+                        } else {
+                            System.out.println("Everyone Wins :)");
+                        }
+                    }
+                    System.exit(0);
             }
 
             if (Coin.xPos == Player.xPos && Coin.yPos == Player.yPos || Coin.xPos == Player2.xPos && Coin.yPos == Player2.yPos) {
