@@ -9,6 +9,7 @@ public class Main extends JFrame implements KeyListener {
     static int h = 8;
     static boolean inGame = false;
     static boolean multiplayer = false;
+    static boolean pressable = true;
     static List<String> choose = new ArrayList<>();
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -77,7 +78,11 @@ public class Main extends JFrame implements KeyListener {
                 inGame = true;
                 Grid.updatePosition(w, h);
             } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                if (!pressable) {
+                    return;
+                }
                 multiplayer = true;
+                pressable = false;
                 System.out.println();
                 System.out.println("Player 1 uses arrow keys to move, Player 2 uses WASD.");
                 System.out.println("Move around to collect money, first to $50 wins.");
@@ -96,6 +101,10 @@ public class Main extends JFrame implements KeyListener {
             } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                 Select.displayMenu(choose.get(index1), choose.get(index2));
             } else if (e.getKeyCode() == KeyEvent.VK_1) {
+                if (!pressable) {
+                    return;
+                }
+                pressable = false;
                 System.out.println();
                 System.out.println("Use arrow keys to move.");
                 System.out.println("Move around to collect money, press E to enter and exit the shop.");
