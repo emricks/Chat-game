@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends JFrame implements KeyListener {
-    static int w = 8;
-    static int h = 8;
+    static int Sw = 8;
+    static int Sh = 8;
+    static int Mw = 10;
+    static int Mh = 10;
     static boolean inGame = false;
     static boolean multiplayer = false;
     static boolean pressable = true;
@@ -16,7 +18,7 @@ public class Main extends JFrame implements KeyListener {
             Main frame = new Main();
             frame.setVisible(true);
         });
-        System.out.println("1 for singleplayer, 2 for multiplayer");
+        System.out.println("Press 1 for singleplayer, Press 2 for multiplayer");
     }
     static int index1 = 0;
     static int index2 = 0;
@@ -52,6 +54,7 @@ public class Main extends JFrame implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (multiplayer && !inGame) {
+            System.out.println("x");
             if (e.getKeyCode() == KeyEvent.VK_UP && index1 < choose.size()) {
                 index1++;
             } else if (e.getKeyCode() == KeyEvent.VK_DOWN && index1 > 0) {
@@ -63,21 +66,28 @@ public class Main extends JFrame implements KeyListener {
             } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 Player.character = choose.get(index1);
                 Player2.character = choose.get(index2);
+                System.out.println(Player.character);
+                System.out.println(Player2.character);
                 inGame = true;
-                Grid.updatePosition(10,10);
+                Grid.updatePosition(Mw,Mh);
             }
             Select.displayMenu(choose.get(index1), choose.get(index2));
         }
         if (!multiplayer && !inGame) {
             if (e.getKeyCode() == KeyEvent.VK_UP && index1 < choose.size()) {
                 index1++;
+                Select.displayMenu(choose.get(index1), choose.get(index2));
             } else if (e.getKeyCode() == KeyEvent.VK_DOWN && index1 > 0) {
                 index1--;
+                Select.displayMenu(choose.get(index1), choose.get(index2));
             } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 Player.character = choose.get(index1);
                 inGame = true;
-                Grid.updatePosition(w, h);
-            } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                Grid.updatePosition(Sw, Sh);
+            }
+        }
+        if (!inGame) {
+            if (e.getKeyCode() == KeyEvent.VK_2) {
                 if (!pressable) {
                     return;
                 }
@@ -88,19 +98,23 @@ public class Main extends JFrame implements KeyListener {
                 System.out.println("Move around to collect money, first to $50 wins.");
                 System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
                 System.out.println("Press SHIFT to choose characters.");
-                Player.xPos = 2;
-                Player.yPos = 7;
-                Player2.xPos = 7;
-                Player2.yPos = 7;
-                Coin.changePosition();
-                Coin1.changePosition();
-                Coin2.changePosition();
-                Coin2.xPos = 5;
-                Coin2.yPos = 5;
-                Shop.rarityMultiplier = 3;
-            } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                 Select.displayMenu(choose.get(index1), choose.get(index2));
-            } else if (e.getKeyCode() == KeyEvent.VK_1) {
+                Player.xPos = 0;
+                Player.yPos = Mh-1;
+                Player2.xPos = Mw-1;
+                Player2.yPos = Mh-1;
+                Coin.xPos = 0;
+                Coin.yPos = 0;
+                Coin1.xPos = Mw-1;
+                Coin1.yPos = 0;
+                Coin2.xPos = Mw/2;
+                Coin2.yPos = 0;
+                Shop.rarityMultiplier = 3;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                Select.displayMenu(choose.get(index1), choose.get(index2));
+            }
+            if (e.getKeyCode() == KeyEvent.VK_1) {
                 if (!pressable) {
                     return;
                 }
@@ -116,7 +130,7 @@ public class Main extends JFrame implements KeyListener {
         if (!multiplayer && inGame) {
             System.out.println("Not multiplayer is running");
             if (!Grid.shop) {
-                Grid.updatePosition(w, h);
+                Grid.updatePosition(Sw, Sh);
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_UP:
                         if (Player.yPos > 0) {
@@ -124,10 +138,9 @@ public class Main extends JFrame implements KeyListener {
                         } else {
                             Player.yPos = Grid.height - 1;
                         }
-                        System.out.println("Up");
                         break;
                     case KeyEvent.VK_DOWN:
-                        if (Player.yPos < h-1) {
+                        if (Player.yPos < Sh -1) {
                             Player.yPos++;
                         } else {
                             Player.yPos = 0;
@@ -141,7 +154,7 @@ public class Main extends JFrame implements KeyListener {
                         }
                         break;
                     case KeyEvent.VK_RIGHT:
-                        if (Player.xPos < w-1) {
+                        if (Player.xPos < Sw -1) {
                             Player.xPos++;
                         } else {
                             Player.xPos = 0;
@@ -167,7 +180,7 @@ public class Main extends JFrame implements KeyListener {
                 if (Player.xPos == Coin2.xPos && Player.yPos == Coin2.yPos) {
                     Coin2.changePosition();
                 }
-                Grid.updatePosition(w, h);
+                Grid.updatePosition(Sw, Sh);
 
             } else {
                 Shop.openShop();
@@ -209,26 +222,24 @@ public class Main extends JFrame implements KeyListener {
                         break;
                     case KeyEvent.VK_E:
                         Grid.shop = false;
-                        Grid.updatePosition(w, h);
+                        Grid.updatePosition(Sw, Sh);
                         return;
                 }
                 Shop.openShop();
             }
         } else if (inGame) {
-            w = 10;
-            h = 10;
-            Grid.updatePosition(w, h);
+            Grid.updatePosition(Mw, Mh);
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_UP:
                     if (Player.yPos > 0) {
                         Player.yPos--;
                     } else {
-                        Player.yPos = Grid.height - 1;
+                        Player.yPos = Mh-1;
                     }
                     System.out.println("Up");
                     break;
                 case KeyEvent.VK_DOWN:
-                    if (Player.yPos < h-1) {
+                    if (Player.yPos < Mh-1) {
                         Player.yPos++;
                     } else {
                         Player.yPos = 0;
@@ -238,11 +249,11 @@ public class Main extends JFrame implements KeyListener {
                     if (Player.xPos > 0) {
                         Player.xPos--;
                     } else {
-                        Player.xPos = Grid.width - 1;
+                        Player.xPos = Mw-1;
                     }
                     break;
                 case KeyEvent.VK_RIGHT:
-                    if (Player.xPos < w-1) {
+                    if (Player.xPos < Mw -1) {
                         Player.xPos++;
                     } else {
                         Player.xPos = 0;
@@ -256,12 +267,12 @@ public class Main extends JFrame implements KeyListener {
                     if (Player2.yPos > 0) {
                         Player2.yPos--;
                     } else {
-                        Player2.yPos = Grid.height - 1;
+                        Player2.yPos = Mh-1;
                     }
                     System.out.println("Up");
                     break;
                 case KeyEvent.VK_S:
-                    if (Player2.yPos < h-1) {
+                    if (Player2.yPos < Mh -1) {
                         Player2.yPos++;
                     } else {
                         Player2.yPos = 0;
@@ -271,11 +282,11 @@ public class Main extends JFrame implements KeyListener {
                     if (Player2.xPos > 0) {
                         Player2.xPos--;
                     } else {
-                        Player2.xPos = Grid.width - 1;
+                        Player2.xPos = Mw-1;
                     }
                     break;
                 case KeyEvent.VK_D:
-                    if (Player2.xPos < w-1) {
+                    if (Player2.xPos < Mw -1) {
                         Player2.xPos++;
                     } else {
                         Player2.xPos = 0;
@@ -310,26 +321,24 @@ public class Main extends JFrame implements KeyListener {
                 Coin2.changePosition();
             }
             if (Player.cash >= 50) {
+                Grid.updatePosition(Mw, Mh);
                 System.out.println("PLayer 1 wins!");
                 System.exit(0);
             }
             if (Player2.cash >= 50) {
+                Grid.updatePosition(Mw, Mh);
                 System.out.println("PLayer 2 wins!");
                 System.exit(0);
             }
-            Grid.updatePosition(w, h);
+            Grid.updatePosition(Mw, Mh);
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // Implement if needed
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Implement if needed
     }
-
-
 }

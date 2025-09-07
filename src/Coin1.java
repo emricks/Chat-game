@@ -4,6 +4,9 @@ public class Coin1 {
     static int xPos = -1;
     static int yPos = -1;
 
+    public Coin1() {
+    }
+
     static void changePosition() {
         if (Player.xPos == xPos && Player.yPos == yPos) {
             Player.cash += value;
