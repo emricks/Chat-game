@@ -4,11 +4,6 @@ public class Shop {
     static int numCoinsPrice = 20;
     static int rarityPrice = 10;
     public static void openShop() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-        for (int i = 0; i < 10; i++) {
-            System.out.println();
-        }
         String print;
         if (Player.selected == 'c') {
             if (Player.cash < 10) {
@@ -51,6 +46,6 @@ public class Shop {
                         "+------------------------+\n";
             }
         }
-        System.out.println(print);
+        Main.printSwing(print);
     }
 }

@@ -7,12 +7,11 @@ public class Grid {
     static boolean shop = false;
     static List<List<Character>> board = new ArrayList<>();
     public static void updatePosition(int w, int h) {
-        System.out.println(Coin.xPos + " " + Coin.yPos);
-        System.out.println(Coin1.xPos + " " + Coin1.yPos);
-        System.out.println(Coin2.xPos + " " + Coin2.yPos);
+        Main.printSwing(Coin.xPos + " " + Coin.yPos);
+        Main.printSwing(Coin1.xPos + " " + Coin1.yPos);
+        Main.printSwing(Coin2.xPos + " " + Coin2.yPos);
         board.clear();
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        Main.printSwing("\033[H\033[2J");
         width = w;
         height = h;
         for (int i = 0; i < Grid.height; i++) {
@@ -158,6 +157,6 @@ public class Grid {
             }
             print.append("+");
         }
-        System.out.println(print);
+        Main.printSwing(print.toString());
     }
 }
