@@ -1,10 +1,11 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.KeyAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main extends JFrame implements KeyListener {
+public class Main extends JFrame {
     static int Sw = 8;
     static int Sh = 8;
     static int Mw = 10;
@@ -13,21 +14,32 @@ public class Main extends JFrame implements KeyListener {
     static boolean multiplayer = false;
     static boolean pressable = true;
     static List<String> choose = new ArrayList<>();
+
+    static JTextArea textArea = new JTextArea();
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Main frame = new Main();
-            frame.setVisible(true);
-        });
-        System.out.println("Press 1 for singleplayer, Press 2 for multiplayer");
+        SwingUtilities.invokeLater(Main::new);
     }
     static int index1 = 0;
     static int index2 = 0;
     public Main() {
-        setTitle("Game");
-        setSize(400, 400);
+        super("Game");
+        setSize(500, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        addKeyListener(this); // Add key listener to the frame
-        setFocusable(true); // Make sure the frame can receive focus
+
+        textArea.setEditable(false);
+        textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        textArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                handleKeyPress(e);
+            }
+        });
+        getContentPane().add(textArea);
+
+        setVisible(true);
+
+        printSwing("Press 1 for singleplayer, Press 2 for multiplayer");
         choose.add("\uD83E\uDD99");
         choose.add("\uD83E\uDD91");
         choose.add("\uD83E\uDD98");
@@ -51,10 +63,13 @@ public class Main extends JFrame implements KeyListener {
         choose.add("\uD83D\uDC0E");
         choose.add("\uD83D\uDC06");
     }
-    @Override
-    public void keyPressed(KeyEvent e) {
+
+    public void handleKeyPress(KeyEvent e) {
+        Component owner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        System.out.println("Focus owner: " + owner);
+
         if (multiplayer && !inGame) {
-            System.out.println("x");
+            Main.printSwing("x");
             if (e.getKeyCode() == KeyEvent.VK_UP && index1 < choose.size()) {
                 index1++;
             } else if (e.getKeyCode() == KeyEvent.VK_DOWN && index1 > 0) {
@@ -66,8 +81,8 @@ public class Main extends JFrame implements KeyListener {
             } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 Player.character = choose.get(index1);
                 Player2.character = choose.get(index2);
-                System.out.println(Player.character);
-                System.out.println(Player2.character);
+                Main.printSwing(Player.character);
+                Main.printSwing(Player2.character);
                 inGame = true;
                 Grid.updatePosition(Mw,Mh);
             }
@@ -93,11 +108,10 @@ public class Main extends JFrame implements KeyListener {
                 }
                 multiplayer = true;
                 pressable = false;
-                System.out.println();
-                System.out.println("Player 1 uses arrow keys to move, Player 2 uses WASD.");
-                System.out.println("Move around to collect money, first to $50 wins.");
-                System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
-                System.out.println("Press SHIFT to choose characters.");
+                Main.printSwing("Player 1 uses arrow keys to move, Player 2 uses WASD.");
+                Main.printSwing("Move around to collect money, first to $50 wins.");
+                Main.printSwing("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
+                Main.printSwing("Press SHIFT to choose characters.");
                 Select.displayMenu(choose.get(index1), choose.get(index2));
                 Player.xPos = 0;
                 Player.yPos = Mh-1;
@@ -119,16 +133,15 @@ public class Main extends JFrame implements KeyListener {
                     return;
                 }
                 pressable = false;
-                System.out.println();
-                System.out.println("Use arrow keys to move.");
-                System.out.println("Move around to collect money, press E to enter and exit the shop.");
-                System.out.println("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
-                System.out.println("Press SHIFT to choose character.");
+                Main.printSwing("Use arrow keys to move.");
+                Main.printSwing("Move around to collect money, press E to enter and exit the shop.");
+                Main.printSwing("\uD83D\uDCB5 = $1, \uD83D\uDCB0 = $5, \uD83D\uDC8E = $25");
+                Main.printSwing("Press SHIFT to choose character.");
                 Coin.changePosition();
             }
         }
         if (!multiplayer && inGame) {
-            System.out.println("Not multiplayer is running");
+            Main.printSwing("Not multiplayer is running");
             if (!Grid.shop) {
                 Grid.updatePosition(Sw, Sh);
                 switch (e.getKeyCode()) {
@@ -236,7 +249,7 @@ public class Main extends JFrame implements KeyListener {
                     } else {
                         Player.yPos = Mh-1;
                     }
-                    System.out.println("Up");
+                    Main.printSwing("Up");
                     break;
                 case KeyEvent.VK_DOWN:
                     if (Player.yPos < Mh-1) {
@@ -269,7 +282,7 @@ public class Main extends JFrame implements KeyListener {
                     } else {
                         Player2.yPos = Mh-1;
                     }
-                    System.out.println("Up");
+                    Main.printSwing("Up");
                     break;
                 case KeyEvent.VK_S:
                     if (Player2.yPos < Mh -1) {
@@ -298,14 +311,14 @@ public class Main extends JFrame implements KeyListener {
                     break;
                 case KeyEvent.VK_SLASH:
                     if (Player.cash > Player2.cash) {
-                        System.out.println("Player 1 Wins!");
+                        Main.printSwing("Player 1 Wins!");
                     } else if (Player2.cash > Player.cash) {
-                        System.out.println("Player 2 Wins!");
+                        Main.printSwing("Player 2 Wins!");
                     } else {
                         if (Player.cash == 0) {
-                            System.out.println("Nobody Wins :(");
+                            Main.printSwing("Nobody Wins :(");
                         } else {
-                            System.out.println("Everyone Wins :)");
+                            Main.printSwing("Everyone Wins :)");
                         }
                     }
                     System.exit(0);
@@ -322,23 +335,25 @@ public class Main extends JFrame implements KeyListener {
             }
             if (Player.cash >= 50) {
                 Grid.updatePosition(Mw, Mh);
-                System.out.println("PLayer 1 wins!");
+                Main.printSwing("PLayer 1 wins!");
                 System.exit(0);
             }
             if (Player2.cash >= 50) {
                 Grid.updatePosition(Mw, Mh);
-                System.out.println("PLayer 2 wins!");
+                Main.printSwing("PLayer 2 wins!");
                 System.exit(0);
             }
             Grid.updatePosition(Mw, Mh);
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-    }
+    public static void printSwing(String text) {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            textArea.setText(text);
+        });
 
-    @Override
-    public void keyTyped(KeyEvent e) {
+        Component owner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        System.out.println("Focus owner: " + owner);
+
     }
 }
